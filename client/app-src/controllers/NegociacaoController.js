@@ -1,4 +1,6 @@
-import { Negociacoes, NegociacaoService, Negociacao } from '../domain/index.js';
+// NegociacaoService was removed from the static import,
+// because it will be served by demand using lazy loading
+import { Negociacoes, Negociacao } from '../domain/index.js';
 import { NegociacoesView, MensagemView, Mensagem, DateConverter } from '../ui/index.js';
 import { getNegociacaoDao, Bind, getExceptionMessage, debounce, controller, bindEvent } from '../util/index.js';
 
@@ -21,7 +23,8 @@ export class NegociacaoController {
             'texto'
         );
 
-        this._service = new NegociacaoService();
+        // Changing the structure to use lazy loading WebPack
+        // this._service = new NegociacaoService();
 
         this._init();
     }
@@ -75,7 +78,22 @@ export class NegociacaoController {
     async importaNegociacoes() {
 
         try {
-            const negociacoes = await this._service.obtemNegociacoesDoPeriodo();
+
+            // Prepare to receive the NegociacaoService just when the method is called.
+            // When WebPack finds this line on the build process, it will generate a new bundle for
+            // the NegociacaoService file like: 0.bundle (code splitting)
+            
+            // const { NegociacaoService } = await System.import('../domain/negociacao/NegociacaoService');
+
+
+            // To use the ES6 import syntax import(). We should add a plugin on Babel to avoid error
+            // babel-plugin-syntax-dynamic-import and configure it under .babelrc file.
+
+            const { NegociacaoService } = await import('../domain/negociacao/NegociacaoService');
+            
+            const service = new NegociacaoService();
+
+            const negociacoes = await service.obtemNegociacoesDoPeriodo();
             console.log(negociacoes);
             negociacoes.filter(novaNegociacao =>
 

@@ -1,10 +1,15 @@
 import { NegociacaoController } from './controllers/NegociacaoController.js';
 import { Negociacao } from './domain/index.js';
+
 // The import bellow works but is better use extract-text-webpack-plugin for it to avoid FOUC
 // After webpack creates the bundle with all the css on it.
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import 'jquery/dist/jquery.js'
+
+// Jquery is commented, because now it is being bundled throught the CommonsChunkPlugin
+// inside the webpack config file.
+// import 'jquery/dist/jquery.js'
+
 import 'bootstrap/js/modal.js'
 import '../css/styles.css'; 
 
@@ -21,5 +26,5 @@ const config = {
     body 
 };
 
-fetch('http://localhost:3000/negociacoes', config)
+fetch(`${SERVICE_URL}/negociacoes`, config)
     .then(() => console.log('Dado enviado com sucesso'));
